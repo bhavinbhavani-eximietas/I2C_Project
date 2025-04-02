@@ -1,0 +1,102 @@
+# vsim -voptargs="+acc" i2c_tb_top -c -do "run -all;exit" 
+# Start time: 15:39:42 on Apr 02,2025
+# ** Note: (vsim-3812) Design is being optimized...
+# //  Questa Sim-64
+# //  Version 10.7c win64 Aug 18 2018
+# //
+# //  Copyright 1991-2018 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  QuestaSim and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading sv_std.std
+# Loading work.i2c_if(fast)
+# Loading mtiUvm.uvm_pkg
+# Loading work.i2c_env_pkg(fast)
+# Loading work.i2c_test_pkg(fast)
+# Loading work.i2c_tb_top(fast)
+# Loading work.i2c_inf_sv_unit(fast)
+# Loading work.interconnect_if(fast)
+# Loading work.i2c_if(fast__1)
+# Loading mtiUvm.questa_uvm_pkg(fast)
+# Loading work.i2c_if(fast)
+# Loading C:/questasim64_10.7c/uvm-1.1d\win64\uvm_dpi.dll
+# run -all
+# ----------------------------------------------------------------
+# UVM-1.1d
+# (C) 2007-2013 Mentor Graphics Corporation
+# (C) 2007-2013 Cadence Design Systems, Inc.
+# (C) 2006-2013 Synopsys, Inc.
+# (C) 2011-2013 Cypress Semiconductor Corp.
+# ----------------------------------------------------------------
+# 
+#   ***********       IMPORTANT RELEASE NOTES         ************
+# 
+#   You are using a version of the UVM library that has been compiled
+#   with `UVM_NO_DEPRECATED undefined.
+#   See http://www.eda.org/svdb/view.php?id=3313 for more details.
+# 
+#   You are using a version of the UVM library that has been compiled
+#   with `UVM_OBJECT_MUST_HAVE_CONSTRUCTOR undefined.
+#   See http://www.eda.org/svdb/view.php?id=3770 for more details.
+# 
+#       (Specify +UVM_NO_RELNOTES to turn off this notice)
+# 
+# UVM_INFO verilog_src/questa_uvm_pkg-1.2/src/questa_uvm_pkg.sv(215) @ 0: reporter [Questa UVM] QUESTA_UVM-1.2.3
+# UVM_INFO verilog_src/questa_uvm_pkg-1.2/src/questa_uvm_pkg.sv(216) @ 0: reporter [Questa UVM]  questa_uvm::init(+struct)
+# UVM_INFO @ 0: reporter [RNTST] Running test i2c_base_test...
+# UVM_INFO @ 0: reporter [UVMTOP] UVM testbench topology:
+# --------------------------------------------------------------
+# Name                       Type                    Size  Value
+# --------------------------------------------------------------
+# uvm_test_top               i2c_base_test           -     @494 
+#   m_env_h                  i2c_env                 -     @501 
+#     m_mon_h                i2c_bus_monitor         -     @513 
+#       m_mst_an_port_h      uvm_analysis_port       -     @520 
+#       m_slv_an_port_h      uvm_analysis_port       -     @528 
+#     m_mst_agt_h[0]         i2c_mst_agt             -     @536 
+#       m_drv_h              i2c_mst_driver          -     @564 
+#         rsp_port           uvm_analysis_port       -     @579 
+#         seq_item_port      uvm_seq_item_pull_port  -     @571 
+#       m_seqr_h             i2c_mst_seqr            -     @587 
+#         rsp_export         uvm_analysis_export     -     @594 
+#         seq_item_export    uvm_seq_item_pull_imp   -     @688 
+#         arbitration_queue  array                   0     -    
+#         lock_queue         array                   0     -    
+#         num_last_reqs      integral                32    'd1  
+#         num_last_rsps      integral                32    'd1  
+#     m_slv_agt_h[0]         i2c_slv_agt             -     @548 
+#       m_drv_h              i2c_slv_driver          -     @705 
+#         rsp_port           uvm_analysis_port       -     @720 
+#         seq_item_port      uvm_seq_item_pull_port  -     @712 
+#       m_seqr_h             i2c_slv_seqr            -     @728 
+#         rsp_export         uvm_analysis_export     -     @735 
+#         seq_item_export    uvm_seq_item_pull_imp   -     @829 
+#         arbitration_queue  array                   0     -    
+#         lock_queue         array                   0     -    
+#         num_last_reqs      integral                32    'd1  
+#         num_last_rsps      integral                32    'd1  
+# --------------------------------------------------------------
+# 
+# 
+# --- UVM Report Summary ---
+# 
+# ** Report counts by severity
+# UVM_INFO :    4
+# UVM_WARNING :    0
+# UVM_ERROR :    0
+# UVM_FATAL :    0
+# ** Report counts by id
+# [Questa UVM]     2
+# [RNTST]     1
+# [UVMTOP]     1
+# ** Note: $finish    : C:/questasim64_10.7c/win64/../verilog_src/uvm-1.1d/src/base/uvm_root.svh(430)
+#    Time: 0 ns  Iteration: 215  Instance: /i2c_tb_top
+# End time: 15:39:44 on Apr 02,2025, Elapsed time: 0:00:02
+# Errors: 0, Warnings: 0
