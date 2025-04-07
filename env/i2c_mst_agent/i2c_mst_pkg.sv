@@ -18,7 +18,7 @@ package i2c_mst_pkg;
   `include "i2c_mst_seqr.sv"
   `include "i2c_mst_agent.sv"
   
-  `include "i2c_mst_base_seqs.sv"
+  `include "i2c_mst_base_seq.sv"
 
 endpackage: i2c_mst_pkg
 

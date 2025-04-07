@@ -37,7 +37,7 @@ function void i2c_mst_agt::build_phase(uvm_phase phase);
   m_cfg_h = i2c_mst_config::type_id::create("m_cfg_h", this);	 
     
   //get master configuration 
-  if(!uvm_config_db #(i2c_mst_config)::get(this, "", "mas_config", m_cfg_h)) begin
+  if(!uvm_config_db #(i2c_mst_config)::get(this, "", "mst_config", m_cfg_h)) begin
     `uvm_fatal(get_full_name(), "Master config is not available")
   end
 	 

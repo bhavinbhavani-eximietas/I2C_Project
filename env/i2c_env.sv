@@ -24,7 +24,7 @@ class i2c_env extends uvm_env;
   //----i2c_agent
   i2c_mst_agt m_mst_agt_h[];
   i2c_slv_agt m_slv_agt_h[];
-	
+
   //-------constructor 
   extern function new(string name = "", uvm_component parent = null);
   extern function void build_phase(uvm_phase phase);
@@ -37,8 +37,11 @@ function i2c_env::new(string name = "", uvm_component parent = null);
 endfunction 
   
 function void i2c_env::build_phase(uvm_phase phase);
+  if(!uvm_config_db #(i2c_env_config)::get(this, "*", "m_env_cfg_h", m_env_cfg_h)) begin 
+    `uvm_fatal(get_full_name(), "env config is not available")
+  end 
+
   m_env_cfg_h = i2c_env_config::type_id::create("m_env_cfg_h");
-  uvm_config_db #(i2c_env_config)::set(this, "*", "m_env_cfg_h", m_env_cfg_h);
 	
   m_mon_h = i2c_bus_monitor::type_id::create("m_mon_h", this);
 	
@@ -51,7 +54,7 @@ function void i2c_env::build_phase(uvm_phase phase);
   foreach(m_mst_agt_h[i]) begin
     m_mst_agt_h[i] = i2c_mst_agt::type_id::create($sformatf("m_mst_agt_h[%0d]", i), this);
 	m_mst_config_h[i] = i2c_mst_config::type_id::create($sformatf("m_mst_config_h[%0d]", i), this); 
-	uvm_config_db #(i2c_mst_config)::set(this, "*", "mas_config", m_mst_config_h[i]);
+	uvm_config_db #(i2c_mst_config)::set(this, "*", "mst_config", m_mst_config_h[i]);
   end	  
        	
   foreach(m_slv_agt_h[i]) begin

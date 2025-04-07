@@ -1,16 +1,39 @@
-#Makefile for UVM testbench
+# ==========================================================
+# Makefile for UVM Testbench
+# ==========================================================
 
 
+VLOG = vlog
+VSIM = vsim
 
-cmp:
-	vlog ../rtl/i2c_inf.sv ../env/i2c_env_pkg.sv ../test/i2c_test_pkg.sv ../top/i2c_top.sv +incdir+../env/i2c_mst_agent +incdir+../env/i2c_slv_agent +incdir+../env +incdir+../test
-test=""
+FILELIST = filelist.f
+
+TEST ?= test
+
+# ==========================================================
+# Compilation
+# ==========================================================
+
+compile:
+	$(VLOG) -f $(FILELIST)
+
+# ==========================================================
+# Simulation
+# ==========================================================
 
 sim:
-	vsim -voptargs="+acc" i2c_tb_top -c -do "run -all;exit" 
+	$(VSIM) -voptargs="+acc" i2c_tb_top -c -do "run -all; exit"
 
 wave:
-	vsim -voptargs="+acc" top +UVM_testNAME=$(test)
-	
+	$(VSIM) -voptargs="+acc" i2c_tb_top +UVM_TESTNAME=$(TEST)
+
+# ==========================================================
+# Cleanup
+# ==========================================================
+
+clean:
+	rm -rf work transcript vsim.wlf *.log *.ucdb *.vstf *.asdb *.vpd
+
+.PHONY: compile sim wave clean
 
 		

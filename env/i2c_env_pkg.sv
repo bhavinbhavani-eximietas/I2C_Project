@@ -25,6 +25,7 @@ package i2c_env_pkg;
   // import i2c_mst_pkg ::*;
   // import i2c_slv_pkg ::*;
   
+  `include "i2c_env_config.sv"
   `include "i2c_mst_seq_item.sv"
   `include "i2c_slv_seq_item.sv"
   
@@ -41,7 +42,6 @@ package i2c_env_pkg;
   `include "i2c_slv_base_seq.sv"
   
   `include "i2c_bus_monitor.sv"
-  `include "i2c_env_config.sv"
   `include "i2c_env.sv"
   
 endpackage: i2c_env_pkg
