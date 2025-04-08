@@ -60,12 +60,14 @@ task i2c_mst_driver::gen_clk();
     if(clk_en == 1) begin
       #(period - duty_time);
       m_vif.scl_oe <= 0;
+      
       #(duty_time);
       m_vif.scl_oe <= 1;
+      
     end
     else begin  // release SCL line
       m_vif.scl_oe <= 0;
-      #(duty_time);
+      #(2);
     end
     
   end
@@ -76,7 +78,7 @@ endtask: gen_clk
 task i2c_mst_driver::start_condition();
   fork
     begin
-    @(negedge m_vif.sda_in);
+      @(negedge m_vif.sda_in);
       #(duty_time/2);
       m_vif.scl_oe <= 1;
       clk_en = 1;
@@ -91,9 +93,12 @@ endtask: start_condition
 
 task i2c_mst_driver::stop_condition();
   begin
+    @(negedge m_vif.scl_in);
+    m_vif.sda_oe = 1;
+
     @(posedge m_vif.scl_in);
     #(duty_time/2);
-    m_vif.sda_oe <= 0;
+    m_vif.sda_oe = 0;
     clk_en = 0;
   end 
 endtask: stop_condition
@@ -101,12 +106,13 @@ endtask: stop_condition
 // --------------------------------------------------------------------------
 
 task i2c_mst_driver::send_info(input bit[7:0] info_byte);
-  foreach(info_byte[i]) begin
+  for(int i = 7; i >=0; i -= 1) begin
     @(negedge m_vif.scl_in);
-    m_vif.sda_oe <= ~info_byte[7 - i];  
+    m_vif.sda_oe = !info_byte[i];
   end
-     
-  m_vif.sda_oe <= 0;  // release SDA
+  
+  @(negedge m_vif.scl_in);
+  m_vif.sda_oe = 0;  // release SDA
 endtask: send_info
 
 // --------------------------------------------------------------------------
@@ -127,6 +133,7 @@ task i2c_mst_driver::mst_drv_fsm();
   case(state)   
     idle :  
       begin
+        #(duty_time);
         seq_item_port.get_next_item(req);
         state = start;
       end
@@ -137,7 +144,7 @@ task i2c_mst_driver::mst_drv_fsm();
         state = slv_addr;
       end
     
-    slv_addr :   // send - { slave_address, R/W bit }
+    slv_addr :  
       begin    
         send_info({req.m_slv_addr, req.m_kind});
         check_ack_nack();
