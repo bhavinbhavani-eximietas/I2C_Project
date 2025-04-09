@@ -3,12 +3,12 @@
 # ==========================================================
 
 
-VLOG = vlog
-VSIM = vsim
+VLOG = ${QUESTA}/vlog.exe
+VSIM = ${QUESTA}/vsim.exe
 
 FILELIST = filelist.f
 
-TEST ?= test
+TEST ?= i2c_base_test
 
 # ==========================================================
 # Compilation
@@ -21,10 +21,10 @@ compile:
 # Simulation
 # ==========================================================
 
-sim:
-	$(VSIM) -voptargs="+acc" i2c_tb_top -c -do "run -all; exit"
+sim: compile
+	$(VSIM) -voptargs="+acc" i2c_tb_top +UVM_TESTNAME=$(TEST) -c -do "run -all; exit"
 
-wave:
+wave: compile
 	$(VSIM) -voptargs="+acc" i2c_tb_top +UVM_TESTNAME=$(TEST)
 
 # ==========================================================
