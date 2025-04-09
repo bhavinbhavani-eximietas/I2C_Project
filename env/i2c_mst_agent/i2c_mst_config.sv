@@ -10,6 +10,7 @@ class i2c_mst_config extends uvm_object;
   
   //To set i2c Master agent mode i.e. ACTIVE, PASSIVE
   uvm_active_passive_enum is_active = UVM_ACTIVE;  //by default it is active 
+  bit[6:0] m_slv_addr_arr[];
    
   //Factory Registeration
   `uvm_object_utils_begin(i2c_mst_config)

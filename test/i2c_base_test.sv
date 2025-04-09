@@ -18,6 +18,7 @@ class i2c_base_test extends uvm_test;
   i2c_env_config m_env_cfg_h;
   
   i2c_mst_base_seq m_mst_seq;
+  i2c_slv_base_seq m_slv_seq;
   //-------constructor 
   extern function new(string name = "", uvm_component parent = null);
   extern function void build_phase(uvm_phase phase);
@@ -41,16 +42,21 @@ function void i2c_base_test::build_phase(uvm_phase phase);
   
   `uvm_info("env_cfg",$sformatf("Address is generated =  ",m_env_cfg_h.sprint()), UVM_NONE);
   
-  uvm_config_db #(i2c_env_config)::set(this, "*", "m_env_cfg_h", m_env_cfg_h);
+  uvm_config_db #(i2c_env_config)::set(null, "*", "m_env_cfg_h", m_env_cfg_h);
 endfunction: build_phase 
 
 task i2c_base_test::run_phase(uvm_phase phase);
   phase.raise_objection(this);
-  m_mst_seq = i2c_mst_base_seq::type_id::create("m_mst_seq");
-  m_mst_seq.start(m_env_h.m_mst_agt_h[0].m_seqr_h);
-  `uvm_info(get_type_name(), "Before drop objection",UVM_NONE)
+  m_mst_seq = i2c_mst_base_seq::type_id::create("m_mst_seq", this);
+  m_slv_seq = i2c_slv_base_seq::type_id::create("m_slv_seq", this);
+  
+  fork
+    m_mst_seq.start(m_env_h.m_mst_agt_h[0].m_seqr_h);
+    #10;
+    m_slv_seq.start(m_env_h.m_slv_agt_h[0].m_seqr_h);
+  join
+
   phase.drop_objection(this);
-  `uvm_info(get_type_name(), "After drop objection",UVM_NONE)
 endtask: run_phase 
 
 

@@ -17,8 +17,8 @@ package i2c_env_pkg;
   parameter MAX_SLV = 10;
   
   // enum for read write
-  typedef enum bit{write, read} trans_kind;
-  
+  typedef enum bit {write, read} trans_kind;
+  typedef enum int {start, addr_rw, slv_addr_ack_nack, reg_addr, ack_nack, data_wr, data_rd, ack_nack_rd} fsm_state;
   // enum for state
   // typedef enum
   

@@ -3,6 +3,7 @@
 import uvm_pkg::*;
 `include "uvm_macros.svh"
 
+
 interface i2c_if (inout tri1 sda, inout tri1 scl);
 
   logic sda_in;
@@ -10,10 +11,10 @@ interface i2c_if (inout tri1 sda, inout tri1 scl);
   bit sda_oe;
   bit scl_oe;
 
-  assign sda = !sda_oe ? 1'bz : 0;
+  assign sda = sda_oe ? 1'b0 : 1'bz;
   assign sda_in = sda;
   
-  assign scl = !scl_oe ? 1'bz : 0;
+  assign scl = scl_oe ? 1'b0 : 1'bz;
   assign scl_in = scl;
 
 endinterface: i2c_if

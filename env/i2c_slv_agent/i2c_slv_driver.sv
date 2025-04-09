@@ -20,6 +20,7 @@ class i2c_slv_driver extends uvm_driver #(i2c_slv_seq_item);
   i2c_slv_seq_item m_slv_trans_h;
    
   bit [7:0] rd_data;   
+  bit [6:0] slv_addr;
 
   extern function new(string name = "", uvm_component parent = null); 
   extern function void build_phase(uvm_phase phase);
@@ -27,6 +28,7 @@ class i2c_slv_driver extends uvm_driver #(i2c_slv_seq_item);
   extern task send_to_dut();
   extern task check_addr();
   extern task reg_addr();
+  extern task slv_reg_addr();
   extern task data(); 
 
 endclass: i2c_slv_driver
@@ -43,7 +45,7 @@ endfunction
 function void i2c_slv_driver::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
-  if (!uvm_config_db#(i2c_env_config)::get(this, "", "m_env_cfg_h", m_env_cfg_h)) begin
+  if (!uvm_config_db#(bit [6:0])::get(this, "", "slv_addr", slv_addr)) begin
     `uvm_fatal(get_type_name(), "Missing env_config!")
   end
 
@@ -56,6 +58,8 @@ task i2c_slv_driver::run_phase(uvm_phase phase);
 
   forever begin
     seq_item_port.get_next_item(m_slv_trans_h);
+    `uvm_info("INFO - SLV_DRV", "Get my next item", UVM_NONE)
+    `uvm_info("INFO - FSM STATE", $sformatf("FSM state : %0s", m_slv_trans_h.state.name()), UVM_NONE)
     send_to_dut();
     seq_item_port.item_done();
   end
@@ -69,7 +73,7 @@ task i2c_slv_driver::send_to_dut();
   end
 
   if(m_slv_trans_h.state == reg_addr) begin
-    reg_addr();
+    slv_reg_addr();
   end
 
   if(m_slv_trans_h.state == data_wr || m_slv_trans_h.state == data_rd) begin
@@ -80,19 +84,20 @@ endtask: send_to_dut
 // --------------------------------------------------------------------------
 
 task i2c_slv_driver::check_addr();
-  if(m_slv_trans_h.m_slv_addr == m_mst_agt_h.m_slv_addr) begin
+  `uvm_info(get_type_name(), "Check slave address ...", UVM_NONE)
+  if(m_slv_trans_h.m_slv_addr == slv_addr) begin
     m_vif.sda_oe <= m_slv_trans_h.m_ack_nack;
   end
   else begin
-    m_vif.sda_oe <= !m_slv_trans_h.m_ack_nack;
+    m_vif.sda_oe <= 1;
   end
 endtask: check_addr 
 
 // --------------------------------------------------------------------------
 
-task i2c_slv_driver::reg_addr();
+task i2c_slv_driver::slv_reg_addr();
     m_vif.sda_oe <= m_slv_trans_h.m_ack_nack;
-endtask: reg_addr
+endtask: slv_reg_addr
 
 // --------------------------------------------------------------------------
 

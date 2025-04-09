@@ -43,7 +43,7 @@ function void i2c_slv_agt::build_phase(uvm_phase phase);
     `uvm_fatal(get_full_name(), "slvter config is not available")
   end
   
-  uvm_config_db #(bit [6:0])::set(this, "*", "slv_addr", m_slv_addr);
+  uvm_config_db #(int)::get(this, "", "slv_addr", m_slv_addr);
 	 
   //if agent is active create driver and sequencer 
   if(m_slv_cfg_h.is_active == UVM_ACTIVE) begin 
@@ -62,8 +62,7 @@ function void i2c_slv_agt::connect_phase(uvm_phase phase);
   super.connect_phase(phase);
   
   if(m_slv_cfg_h.is_active == UVM_ACTIVE) begin 
-    m_drv_h.seq_item_port.connect(m_seqr_h.seq_item_export);
-
+    m_drv_h.seq_item_port.connect(m_seqr_h.seq_item_export); 
     m_drv_h.m_vif = this.m_vif; 
   end
   

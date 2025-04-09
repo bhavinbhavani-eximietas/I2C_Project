@@ -16,7 +16,7 @@ class i2c_mst_seq_item  extends uvm_sequence_item;
   rand trans_kind m_kind;
   bit m_ack;
 
-  constraint m_data_size { m_data.size() inside {[1:3]}; }
+  constraint m_data_size { m_data.size() inside {[1:10]}; }
 
   extern function new(string name = "");
     

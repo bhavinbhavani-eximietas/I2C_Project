@@ -10,8 +10,8 @@ class i2c_mst_driver extends uvm_driver #(i2c_mst_seq_item);
   
   //factory registration
   `uvm_component_utils(i2c_mst_driver)
-  event done; 
   virtual i2c_if m_vif;
+  i2c_mst_seq_item m_mst_trans_h;
   
   bit clk_en;
   bit [7:0] rd_data;
@@ -42,6 +42,7 @@ endfunction
 
 function void i2c_mst_driver::build_phase(uvm_phase phase);
   super.build_phase(phase);
+  m_mst_trans_h = i2c_mst_seq_item::type_id::create("m_mst_trans_h", this);
 endfunction: build_phase
   
 // --------------------------------------------------------------------------
@@ -111,6 +112,7 @@ task i2c_mst_driver::send_info(input bit[7:0] info_byte);
     m_vif.sda_oe = !info_byte[i];
   end
   
+  `uvm_info("DRV", $sformatf("Send Info: %b", info_byte ), UVM_NONE)
   @(negedge m_vif.scl_in);
   m_vif.sda_oe = 0;  // release SDA
 endtask: send_info
@@ -120,9 +122,9 @@ endtask: send_info
 task i2c_mst_driver::check_ack_nack();
   @(posedge m_vif.scl_in);
   if(m_vif.sda_in == 0)
-    req.m_ack = 1;
+    m_mst_trans_h.m_ack = 1;
   else
-    req.m_ack = 0;
+    m_mst_trans_h.m_ack = 0;
 endtask: check_ack_nack
 
 // --------------------------------------------------------------------------
@@ -134,7 +136,7 @@ task i2c_mst_driver::mst_drv_fsm();
     idle :  
       begin
         #(duty_time);
-        seq_item_port.get_next_item(req);
+        seq_item_port.get_next_item(m_mst_trans_h);
         state = start;
       end
     
@@ -146,9 +148,9 @@ task i2c_mst_driver::mst_drv_fsm();
     
     slv_addr :  
       begin    
-        send_info({req.m_slv_addr, req.m_kind});
+        send_info({m_mst_trans_h.m_slv_addr, m_mst_trans_h.m_kind});
         check_ack_nack();
-        if(req.m_ack == 1)
+        if(m_mst_trans_h.m_ack == 1)
           state = reg_addr;
         else
           state = stop;
@@ -156,10 +158,10 @@ task i2c_mst_driver::mst_drv_fsm();
     
     reg_addr :
       begin
-        send_info(req.m_reg_addr);
+        send_info(m_mst_trans_h.m_reg_addr);
         check_ack_nack();
-        if(req.m_ack == 1) begin
-          if(req.m_kind == 0)  // write read operation
+        if(m_mst_trans_h.m_ack == 1) begin
+          if(m_mst_trans_h.m_kind == 0)  // write read operation
           	state = data_wr;
           else
         	  state = data_rd;
@@ -170,10 +172,10 @@ task i2c_mst_driver::mst_drv_fsm();
     
     data_wr :  
       begin
-        while(req.m_data.size() > 0) begin
-          send_info(req.m_data.pop_back());
+        while(m_mst_trans_h.m_data.size() > 0) begin
+          send_info(m_mst_trans_h.m_data.pop_back());
           check_ack_nack();
-          if(req.m_ack == 1)
+          if(m_mst_trans_h.m_ack == 1)
             continue;
           else begin
             state = stop;
@@ -186,7 +188,7 @@ task i2c_mst_driver::mst_drv_fsm();
     data_rd :
       begin
         // driver read data and send ack
-        for(int i = 0; i < req.no_rd_data; i += 1) begin
+        for(int i = 0; i < m_mst_trans_h.no_rd_data; i += 1) begin
           for(int j = 7; j >= 0; j--) begin
             @(posedge m_vif.scl_in);
             rd_data[j] = m_vif.sda_in;

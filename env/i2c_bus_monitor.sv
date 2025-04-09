@@ -13,7 +13,7 @@ class i2c_bus_monitor extends uvm_monitor;
   `uvm_component_utils(i2c_bus_monitor)
 
   //handle of seq_item (transaction class)
-  i2c_slv_seq_item  m_slv_seq_h;
+  i2c_slv_seq_item  m_slv_trans_h;
   
   //virtual interface declaration
   virtual i2c_if m_vif;
@@ -51,7 +51,7 @@ function void i2c_bus_monitor::build_phase(uvm_phase phase);
     `uvm_fatal(get_full_name(), "Master Interface is not available")
   end
 
-  m_slv_seq_h = i2c_slv_seq_item::type_id::create("m_slv_seq_h", this);
+  m_slv_trans_h = i2c_slv_seq_item::type_id::create("m_slv_trans_h", this);
   
 endfunction: build_phase
   
@@ -66,18 +66,24 @@ endtask: run_phase
 // --------------------------------------------------------------------------
 
 task i2c_bus_monitor::check_start();
-  @(negedge m_vif.sda_in);
-  if(m_vif.scl_in == 1) begin
-    m_slv_seq_h.state = addr_rw; // else what 
+  forever begin
+    @(negedge m_vif.sda_in);
+    if(m_vif.scl_in == 1) begin
+      m_slv_trans_h.state = addr_rw;
+      break;
+    end
   end
 endtask: check_start
 
 // --------------------------------------------------------------------------
 
 task i2c_bus_monitor::check_stop();
-  @(posedge m_vif.sda_in);
-  if(m_vif.scl_in == 1) begin
-    m_slv_seq_h.state = start;
+  forever begin
+    @(posedge m_vif.sda_in);
+    if(m_vif.scl_in == 1) begin
+      m_slv_trans_h.state = start;
+      break;
+    end
   end
 endtask: check_stop
 
@@ -97,20 +103,13 @@ task i2c_bus_monitor::get_info();
           // data stable 
         end
         else begin
-          // data not stable
+          `uvm_error(get_type_name(), "DATA IS NOT STABLE DURING HIGH PERIOD OF CLK")
         end
         
       end
-      begin
-        @(posedge m_vif.scl_in);
-        check_start();
-      end
       
-      begin
-        @(posedge m_vif.scl_in);
-        check_stop();
-      end
-
+      check_start();
+      check_stop();
     join_any
     disable fork;
   end
@@ -119,7 +118,7 @@ endtask
 // --------------------------------------------------------------------------
 
 task i2c_bus_monitor::mon_fsm();
-  case(m_slv_seq_h.state)
+  case(m_slv_trans_h.state)
     start:
       begin
         check_start();
@@ -128,11 +127,14 @@ task i2c_bus_monitor::mon_fsm();
     addr_rw:
       begin
         get_info();
-        {m_slv_seq_h.m_slv_addr, m_slv_seq_h.kind_e} = info_byte; 
-        `uvm_info("MON", $sformatf("Info: %b ", info_byte), UVM_NONE)
+        {m_slv_trans_h.m_slv_addr, m_slv_trans_h.kind_e} = info_byte; 
+        `uvm_info("INFO - Get addr_rw", $sformatf("Info: %b ", info_byte), UVM_NONE)
         
-        m_slv_seq_h.state = slv_addr_ack_nack;
-        m_slv_an_port_h.write(m_slv_seq_h); 
+        m_slv_an_port_h.write(m_slv_trans_h); 
+        `uvm_info("INFO - an_port", "DATA send to analysis port", UVM_NONE)
+        `uvm_info("INFO - an_port", $sformatf("FSM State : %0s", m_slv_trans_h.state.name()), UVM_NONE)
+        
+        m_slv_trans_h.state = slv_addr_ack_nack;
       end
       
     slv_addr_ack_nack:
@@ -140,13 +142,13 @@ task i2c_bus_monitor::mon_fsm();
         fork
           begin
             @(posedge m_vif.scl_in);
-            m_slv_seq_h.m_ack = m_vif.sda_in;
+            m_slv_trans_h.m_ack_nack = m_vif.sda_in;
             @(negedge m_vif.scl_in);
-            if(m_slv_seq_h.m_ack == m_vif.sda_in) begin
+            if(m_slv_trans_h.m_ack_nack == m_vif.sda_in) begin
               // data stable 
             end
             else begin
-              // data not stable
+              `uvm_error(get_type_name(), "DATA IS NOT STABLE DURING HIGH PERIOD OF CLK")
             end
           end
           check_start();
@@ -155,8 +157,8 @@ task i2c_bus_monitor::mon_fsm();
         disable fork;
 
         // check ack or nack
-        if(m_slv_seq_h.m_ack == 0) begin
-          m_slv_seq_h.state = reg_addr;
+        if(m_slv_trans_h.m_ack_nack == 0) begin
+          m_slv_trans_h.state = reg_addr;
         end
         else begin
           fork
@@ -170,9 +172,9 @@ task i2c_bus_monitor::mon_fsm();
     reg_addr:
       begin
         get_info();
-        m_slv_seq_h.m_reg_addr = info_byte;
-        m_slv_an_port_h.write(m_slv_seq_h); 
-        m_slv_seq_h.state = ack_nack;
+        m_slv_trans_h.m_reg_addr = info_byte;
+        m_slv_an_port_h.write(m_slv_trans_h); 
+        m_slv_trans_h.state = ack_nack;
       end
      
     ack_nack:
@@ -180,13 +182,13 @@ task i2c_bus_monitor::mon_fsm();
         fork
           begin
             @(posedge m_vif.scl_in);
-            m_slv_seq_h.m_ack = m_vif.sda_in;
+            m_slv_trans_h.m_ack_nack = m_vif.sda_in;
             @(negedge m_vif.scl_in);
-            if(m_slv_seq_h.m_ack == m_vif.sda_in) begin
+            if(m_slv_trans_h.m_ack_nack == m_vif.sda_in) begin
               // data stable 
             end
             else begin
-              // data not stable
+              `uvm_error(get_type_name(), "DATA IS NOT STABLE DURING HIGH PERIOD OF CLK")
             end
           end
           check_start();
@@ -195,12 +197,12 @@ task i2c_bus_monitor::mon_fsm();
         disable fork;
 
         // check ack or nack
-        if(m_slv_seq_h.m_ack == 0) begin
-          if(m_slv_seq_h.kind_e) begin
-            m_slv_seq_h.state = data_rd;
+        if(m_slv_trans_h.m_ack_nack == 0) begin
+          if(m_slv_trans_h.kind_e) begin
+            m_slv_trans_h.state = data_rd;
           end
           else begin
-            m_slv_seq_h.state = data_wr;
+            m_slv_trans_h.state = data_wr;
           end 
         end
         else begin
@@ -219,9 +221,9 @@ task i2c_bus_monitor::mon_fsm();
           check_stop();
           begin
             get_info();
-            m_slv_seq_h.m_data = info_byte;
-            m_slv_seq_h.state = ack_nack;
-            m_slv_an_port_h.write(m_slv_seq_h); 
+            m_slv_trans_h.m_data = info_byte;
+            m_slv_trans_h.state = ack_nack;
+            m_slv_an_port_h.write(m_slv_trans_h); 
           end
         join_any
         disable fork;
@@ -230,9 +232,9 @@ task i2c_bus_monitor::mon_fsm();
     data_rd:
       begin
         get_info();
-        m_slv_seq_h.m_data = info_byte;
-        m_slv_seq_h.state = ack_nack_rd;
-        m_slv_an_port_h.write(m_slv_seq_h); 
+        m_slv_trans_h.m_data = info_byte;
+        m_slv_trans_h.state = ack_nack_rd;
+        m_slv_an_port_h.write(m_slv_trans_h); 
       end
       
     ack_nack_rd:
@@ -240,13 +242,13 @@ task i2c_bus_monitor::mon_fsm();
         fork
           begin
             @(posedge m_vif.scl_in);
-            m_slv_seq_h.m_ack = m_vif.sda_in;
+            m_slv_trans_h.m_ack_nack = m_vif.sda_in;
             @(negedge m_vif.scl_in);
-            if(m_slv_seq_h.m_ack == m_vif.sda_in) begin
+            if(m_slv_trans_h.m_ack_nack == m_vif.sda_in) begin
               // data stable 
             end
             else begin
-              // data not stable
+              `uvm_error(get_type_name(), "DATA IS NOT STABLE DURING HIGH PERIOD OF CLK")
             end
           end
           check_start();
@@ -254,8 +256,8 @@ task i2c_bus_monitor::mon_fsm();
         join_any
         disable fork;
         
-        if(m_slv_seq_h.m_ack == 0) begin
-          m_slv_seq_h.state = data_rd;
+        if(m_slv_trans_h.m_ack_nack == 0) begin
+          m_slv_trans_h.state = data_rd;
         end
         else begin 
           check_stop();
