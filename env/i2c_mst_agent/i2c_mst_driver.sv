@@ -16,7 +16,8 @@ class i2c_mst_driver extends uvm_driver #(i2c_mst_seq_item);
   bit clk_en;
   bit [7:0] rd_data;
   int duty_time = 5, period = 10;
-  enum {idle, start, slv_addr, reg_addr, data_wr, data_rd, stop} state;
+  enum bit [2:0]  {IDLE, START, SLV_ADDR, REG_ADDR, DATA_WR, DATA_RD, STOP} state;
+  parameter CLK_CHECK_TIME = 2;
 
   extern function new(string name = "", uvm_component parent = null);
   extern function void build_phase(uvm_phase phase);
@@ -30,23 +31,19 @@ class i2c_mst_driver extends uvm_driver #(i2c_mst_seq_item);
   extern task mst_drv_fsm();
   
 endclass: i2c_mst_driver
-`endif 
 
 // --------------------------------------------------------------------------
-
 function i2c_mst_driver::new(string name = "", uvm_component parent = null);
-  super.new(name, parent);	 
+  super.new(name, parent); 
 endfunction
   
 // --------------------------------------------------------------------------
-
 function void i2c_mst_driver::build_phase(uvm_phase phase);
   super.build_phase(phase);
   m_mst_trans_h = i2c_mst_seq_item::type_id::create("m_mst_trans_h", this);
 endfunction: build_phase
   
 // --------------------------------------------------------------------------
-
 task i2c_mst_driver::run_phase(uvm_phase phase);
   fork 
     gen_clk();
@@ -55,7 +52,6 @@ task i2c_mst_driver::run_phase(uvm_phase phase);
 endtask: run_phase
 
 // --------------------------------------------------------------------------
-
 task i2c_mst_driver::gen_clk();
   forever begin
     if(clk_en == 1) begin
@@ -64,61 +60,48 @@ task i2c_mst_driver::gen_clk();
       
       #(duty_time);
       m_vif.scl_oe <= 1;
-      
     end
     else begin  // release SCL line
       m_vif.scl_oe <= 0;
-      #(2);
+      #(CLK_CHECK_TIME);
     end
-    
   end
 endtask: gen_clk
 
 // --------------------------------------------------------------------------
-
 task i2c_mst_driver::start_condition();
-  fork
-    begin
-      @(negedge m_vif.sda_in);
-      #(duty_time/2);
-      m_vif.scl_oe <= 1;
-      clk_en = 1;
-    end
-    begin 
-      m_vif.sda_oe <= 1;
-    end
-  join
+  m_vif.sda_oe <= 1;
+  #(duty_time/2);
+  m_vif.scl_oe <= 1;
+  clk_en <= 1;
 endtask: start_condition
 
 // --------------------------------------------------------------------------
-
 task i2c_mst_driver::stop_condition();
   begin
     @(negedge m_vif.scl_in);
-    m_vif.sda_oe = 1;
+    m_vif.sda_oe <= 1;
 
     @(posedge m_vif.scl_in);
     #(duty_time/2);
-    m_vif.sda_oe = 0;
-    clk_en = 0;
+    m_vif.sda_oe <= 0;
+    clk_en <= 0;
   end 
 endtask: stop_condition
 
 // --------------------------------------------------------------------------
-
 task i2c_mst_driver::send_info(input bit[7:0] info_byte);
   for(int i = 7; i >=0; i -= 1) begin
     @(negedge m_vif.scl_in);
-    m_vif.sda_oe = !info_byte[i];
+    m_vif.sda_oe <= !info_byte[i];
   end
   
-  `uvm_info("DRV", $sformatf("Send Info: %b", info_byte ), UVM_NONE)
   @(negedge m_vif.scl_in);
-  m_vif.sda_oe = 0;  // release SDA
+  m_vif.sda_oe <= 0;  // release SDA
+  `uvm_info("DRV", $sformatf("Send Info: %b | 0x%0h", info_byte, info_byte), UVM_LOW)
 endtask: send_info
 
 // --------------------------------------------------------------------------
-
 task i2c_mst_driver::check_ack_nack();
   @(posedge m_vif.scl_in);
   if(m_vif.sda_in == 0)
@@ -128,90 +111,90 @@ task i2c_mst_driver::check_ack_nack();
 endtask: check_ack_nack
 
 // --------------------------------------------------------------------------
-
 task i2c_mst_driver::mst_drv_fsm();
   forever begin
 
-  case(state)   
-    idle :  
+  case(state) 
+    IDLE :
       begin
         #(duty_time);
         seq_item_port.get_next_item(m_mst_trans_h);
-        state = start;
+        state = START;
       end
     
-    start :  
+    START :
       begin
         start_condition();  // drive start condition
-        state = slv_addr;
+        state = SLV_ADDR;
       end
     
-    slv_addr :  
-      begin    
+    SLV_ADDR :
+      begin
         send_info({m_mst_trans_h.m_slv_addr, m_mst_trans_h.m_kind});
         check_ack_nack();
         if(m_mst_trans_h.m_ack == 1)
-          state = reg_addr;
+          state = REG_ADDR;
         else
-          state = stop;
+          state = STOP;
       end
     
-    reg_addr :
+    REG_ADDR :
       begin
         send_info(m_mst_trans_h.m_reg_addr);
         check_ack_nack();
         if(m_mst_trans_h.m_ack == 1) begin
           if(m_mst_trans_h.m_kind == 0)  // write read operation
-          	state = data_wr;
+            state = DATA_WR;
           else
-        	  state = data_rd;
+            state = DATA_RD;
         end
         else
-          state = stop;
+          state = STOP;
       end
     
-    data_wr :  
+    DATA_WR :
       begin
         while(m_mst_trans_h.m_data.size() > 0) begin
-          send_info(m_mst_trans_h.m_data.pop_back());
+          send_info(m_mst_trans_h.m_data.pop_front());
           check_ack_nack();
           if(m_mst_trans_h.m_ack == 1)
             continue;
           else begin
-            state = stop;
+            state = STOP;
             break;
           end
         end
-        state = stop;
+        state = STOP;
       end
     
-    data_rd :
+    DATA_RD :
       begin
         // driver read data and send ack
         for(int i = 0; i < m_mst_trans_h.no_rd_data; i += 1) begin
           for(int j = 7; j >= 0; j--) begin
             @(posedge m_vif.scl_in);
-            rd_data[j] = m_vif.sda_in;
+            rd_data[j] <= m_vif.sda_in;
           end
           @(negedge m_vif.scl_in);
           m_vif.sda_oe <= 1;
+          // release SDA
         end
         @(negedge m_vif.scl_in);
         m_vif.sda_oe <= 0;
-        state = stop;
+        state = STOP;
       end
     
-    stop :  
+    STOP :
       begin
-        stop_condition();  // drive stop condition 
-        state = idle;
+        stop_condition(); // drive stop condition 
+        state = IDLE;
         seq_item_port.item_done();
       end
     default :
       begin
-        state = idle;
+        state = IDLE;
       end
   endcase
   end
 endtask: mst_drv_fsm
-
+`endif 

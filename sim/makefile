@@ -22,10 +22,10 @@ compile:
 # ==========================================================
 
 sim: compile
-	$(VSIM) -voptargs="+acc" i2c_tb_top +UVM_TESTNAME=$(TEST) -c -do "run -all; exit"
+	$(VSIM) -voptargs="+acc" i2c_tb_top +UVM_TESTNAME=${TEST} -c -do "run -all; exit"
 
 wave: compile
-	$(VSIM) -voptargs="+acc" i2c_tb_top +UVM_TESTNAME=$(TEST)
+	$(VSIM) -voptargs="+acc" i2c_tb_top +UVM_TESTNAME=${TEST}
 
 # ==========================================================
 # Cleanup
@@ -36,3 +36,4 @@ clean:
 
 .PHONY: compile sim wave clean
 
+		

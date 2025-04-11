@@ -20,8 +20,8 @@ class i2c_mst_config extends uvm_object;
   extern function new(string name = "");
   
 endclass: i2c_mst_config 
-`endif
 
 function i2c_mst_config::new(string name = "");
   super.new(name);
 endfunction
+`endif

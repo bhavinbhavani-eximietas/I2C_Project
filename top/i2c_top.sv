@@ -24,11 +24,11 @@ module i2c_tb_top();
       uvm_config_db #(virtual i2c_if)::set(null, $sformatf("uvm_test_top.m_env_h.m_slv_agt_h[%0d]",
       i) ,"m_vif" ,m_vif.slave_if[i]);
     end
-	
-  uvm_config_db #(virtual i2c_if)::set(null, "uvm_test_top.m_env_h.m_mon_h","m_vif", 
+
+    uvm_config_db #(virtual i2c_if)::set(null, "uvm_test_top.m_env_h.m_mon_h","m_vif", 
     m_vif.bus_mon_if);
 
-    run_test("i2c_base_test");
+    run_test("");
   end
  
 endmodule: i2c_tb_top

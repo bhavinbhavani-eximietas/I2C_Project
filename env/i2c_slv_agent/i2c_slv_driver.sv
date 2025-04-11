@@ -12,14 +12,13 @@ class i2c_slv_driver extends uvm_driver #(i2c_slv_seq_item);
   
   //-------factory registration
   `uvm_component_utils(i2c_slv_driver)
-  i2c_slv_agt m_slv_agt_h;
 
   virtual i2c_if m_vif;
   i2c_env_config m_env_cfg_h;
   queue mem [bit[7:0]];
   i2c_slv_seq_item m_slv_trans_h;
    
-  bit [7:0] rd_data;   
+  bit [7:0] rd_data; 
   bit [6:0] slv_addr;
 
   extern function new(string name = "", uvm_component parent = null); 
@@ -27,21 +26,17 @@ class i2c_slv_driver extends uvm_driver #(i2c_slv_seq_item);
   extern task run_phase(uvm_phase phase);
   extern task send_to_dut();
   extern task check_addr();
-  extern task reg_addr();
   extern task slv_reg_addr();
   extern task data(); 
 
 endclass: i2c_slv_driver
-`endif
 
 // --------------------------------------------------------------------------
-
 function i2c_slv_driver::new(string name = "", uvm_component parent = null);
-  super.new(name, parent);     
+  super.new(name, parent); 
 endfunction
   
 // --------------------------------------------------------------------------
-
 function void i2c_slv_driver::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
@@ -52,64 +47,67 @@ function void i2c_slv_driver::build_phase(uvm_phase phase);
 endfunction: build_phase 
   
 // --------------------------------------------------------------------------
-
 task i2c_slv_driver::run_phase(uvm_phase phase);
   super.run_phase(phase); 
 
   forever begin
     seq_item_port.get_next_item(m_slv_trans_h);
-    `uvm_info("INFO - SLV_DRV", "Get my next item", UVM_NONE)
-    `uvm_info("INFO - FSM STATE", $sformatf("FSM state : %0s", m_slv_trans_h.state.name()), UVM_NONE)
+    `uvm_info("INFO - SLV_DRV", "Get my next item", UVM_LOW)
     send_to_dut();
     seq_item_port.item_done();
   end
 endtask: run_phase
   
 // --------------------------------------------------------------------------
-
 task i2c_slv_driver::send_to_dut();
-  if(m_slv_trans_h.state == addr_rw) begin
+  if(m_slv_trans_h.m_state == SLV_ADDR_ACK_NACK) begin
     check_addr();
   end
 
-  if(m_slv_trans_h.state == reg_addr) begin
+  if(m_slv_trans_h.m_state == REG_ADDR_ACK_NACK) begin
     slv_reg_addr();
   end
 
-  if(m_slv_trans_h.state == data_wr || m_slv_trans_h.state == data_rd) begin
+  if(m_slv_trans_h.m_state == ACK_NACK_WR || m_slv_trans_h.m_state == ACK_NACK_RD) begin
     data();
   end 
 endtask: send_to_dut
   
 // --------------------------------------------------------------------------
-
 task i2c_slv_driver::check_addr();
-  `uvm_info(get_type_name(), "Check slave address ...", UVM_NONE)
+  `uvm_info(get_type_name(), "Check slave address ...", UVM_LOW)
   if(m_slv_trans_h.m_slv_addr == slv_addr) begin
-    m_vif.sda_oe <= m_slv_trans_h.m_ack_nack;
+    m_vif.sda_oe = m_slv_trans_h.m_ack_nack;
+
+    @(negedge m_vif.scl_in);
+    m_vif.sda_oe <= 0;
   end
   else begin
-    m_vif.sda_oe <= 1;
+    m_vif.sda_oe <= 0;
   end
 endtask: check_addr 
 
 // --------------------------------------------------------------------------
-
 task i2c_slv_driver::slv_reg_addr();
-    m_vif.sda_oe <= m_slv_trans_h.m_ack_nack;
+  m_vif.sda_oe <= m_slv_trans_h.m_ack_nack;
+
+  @(negedge m_vif.scl_in);
+  m_vif.sda_oe <= 0;
 endtask: slv_reg_addr
 
 // --------------------------------------------------------------------------
-
 task i2c_slv_driver::data();
-  if(m_slv_trans_h.kind_e == write) begin
+  if(m_slv_trans_h.m_kind == WRITE) begin
     mem[m_slv_trans_h.m_reg_addr].push_back(m_slv_trans_h.m_data);
-    // ack nack
+    `uvm_info(get_type_name(), $sformatf("SLV_MEM: %0p", mem), UVM_LOW)
+
+    m_vif.sda_oe <= m_slv_trans_h.m_ack_nack;
+    @(negedge m_vif.scl_in);
+    m_vif.sda_oe <= 0;
   end
 
   else begin
-    // if((mem[m_slv_trans_h.m_reg_addr]).size() > 0) begin
-
+    if(mem.exists(m_slv_trans_h.m_reg_addr)) begin
       foreach(mem[m_slv_trans_h.m_reg_addr][i]) begin
         rd_data = mem[m_slv_trans_h.m_reg_addr][i];
 
@@ -128,7 +126,12 @@ task i2c_slv_driver::data();
 
         else begin
           break;
-        end      
+        end
+      end
+    end
+    else begin
+    `uvm_error(get_type_name(), "Register Address is not available !")
     end
   end
 endtask: data
+`endif

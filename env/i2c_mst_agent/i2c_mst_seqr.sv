@@ -14,8 +14,8 @@ class i2c_mst_seqr extends uvm_sequencer #(i2c_mst_seq_item);
   extern function new(string name = "", uvm_component parent = null);
  
 endclass: i2c_mst_seqr
-`endif
 
 function i2c_mst_seqr::new(string name = "", uvm_component parent = null);
   super.new(name, parent);
 endfunction
+`endif

@@ -3,8 +3,6 @@
 //  module name : i2c_env_pkg
 //////////////////////////////////////////////////////////////////
 
-
-
 `ifndef i2c_env_pkg
 `define i2c_env_pkg
 
@@ -17,10 +15,8 @@ package i2c_env_pkg;
   parameter MAX_SLV = 10;
   
   // enum for read write
-  typedef enum bit {write, read} trans_kind;
-  typedef enum int {start, addr_rw, slv_addr_ack_nack, reg_addr, ack_nack, data_wr, data_rd, ack_nack_rd} fsm_state;
-  // enum for state
-  // typedef enum
+  typedef enum bit {WRITE, READ} trans_kind;
+  typedef enum bit [3:0] {START, ADDR_RW, SLV_ADDR_ACK_NACK, REG_ADDR, REG_ADDR_ACK_NACK, DATA_WR, ACK_NACK_WR, DATA_RD, ACK_NACK_RD} fsm_state;
   
   // import i2c_mst_pkg ::*;
   // import i2c_slv_pkg ::*;
@@ -46,6 +42,3 @@ package i2c_env_pkg;
   
 endpackage: i2c_env_pkg
 `endif
-
-
-

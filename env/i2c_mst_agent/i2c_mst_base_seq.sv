@@ -7,13 +7,13 @@
 `define i2c_mst_base_seq
 
 class i2c_mst_base_seq extends uvm_sequence #(i2c_mst_seq_item);
-	
+
   i2c_env_config m_env_cfg_h;
   //-------factory registration
   `uvm_object_utils(i2c_mst_base_seq)
   
   //--------seq_item handle
-  i2c_mst_seq_item m_mst_seq_h;
+  i2c_mst_seq_item m_mst_trans_h;
   
   //-------constructor 
   extern function new(string name = "");
@@ -21,7 +21,6 @@ class i2c_mst_base_seq extends uvm_sequence #(i2c_mst_seq_item);
   extern task body();
 
 endclass: i2c_mst_base_seq
-`endif 
 
 function i2c_mst_base_seq::new(string name = "");
   super.new(name);
@@ -35,14 +34,15 @@ endtask: pre_start
 
 
 task i2c_mst_base_seq::body();
- m_mst_seq_h = i2c_mst_seq_item::type_id::create("m_mst_seq_h");
+ m_mst_trans_h = i2c_mst_seq_item::type_id::create("m_mst_trans_h");
 
- repeat(1) begin
-   start_item(m_mst_seq_h);
-   if(! m_mst_seq_h.randomize() with {m_mst_seq_h.m_kind == write; m_mst_seq_h.m_slv_addr inside {m_env_cfg_h.m_slv_addr_arr};}) begin
+ repeat(4) begin
+   start_item(m_mst_trans_h);
+   if(!m_mst_trans_h.randomize() with { m_mst_trans_h.m_slv_addr inside {m_env_cfg_h.m_slv_addr_arr};}) begin
      `uvm_fatal(get_type_name(), "RANDOMIZATION FAILED !!!");
    end
-   `uvm_info("mst_seq",$sformatf("Data is generated =  ",m_mst_seq_h.sprint()), UVM_NONE);
-   finish_item(m_mst_seq_h);
+   `uvm_info("mst_seq",$sformatf("Data is generated =  ",m_mst_trans_h.sprint()), UVM_LOW);
+   finish_item(m_mst_trans_h);
  end
 endtask
+`endif 

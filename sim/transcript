@@ -1,6 +1,8 @@
-# vsim -voptargs="+acc" i2c_tb_top -c -do "run -all;exit" 
-# Start time: 15:39:42 on Apr 02,2025
-# ** Note: (vsim-3812) Design is being optimized...
+# vsim -voptargs="+acc" i2c_tb_top "+UVM_TESTNAME=i2c_base_test" -c -do "run -all; exit" 
+# Start time: 11:18:59 on Apr 11,2025
+# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
+# ** Warning: ../env/i2c_slv_agent/i2c_slv_driver.sv(111): (vopt-2897) Using non-standard foreach loop variable list syntax.
+# ** Warning: ../env/i2c_slv_agent/i2c_slv_driver.sv(111): (vopt-2897) Using non-standard foreach loop variable list syntax.
 # //  Questa Sim-64
 # //  Version 10.7c win64 Aug 18 2018
 # //
@@ -51,52 +53,379 @@
 # UVM_INFO verilog_src/questa_uvm_pkg-1.2/src/questa_uvm_pkg.sv(215) @ 0: reporter [Questa UVM] QUESTA_UVM-1.2.3
 # UVM_INFO verilog_src/questa_uvm_pkg-1.2/src/questa_uvm_pkg.sv(216) @ 0: reporter [Questa UVM]  questa_uvm::init(+struct)
 # UVM_INFO @ 0: reporter [RNTST] Running test i2c_base_test...
-# UVM_INFO @ 0: reporter [UVMTOP] UVM testbench topology:
-# --------------------------------------------------------------
-# Name                       Type                    Size  Value
-# --------------------------------------------------------------
-# uvm_test_top               i2c_base_test           -     @494 
-#   m_env_h                  i2c_env                 -     @501 
-#     m_mon_h                i2c_bus_monitor         -     @513 
-#       m_mst_an_port_h      uvm_analysis_port       -     @520 
-#       m_slv_an_port_h      uvm_analysis_port       -     @528 
-#     m_mst_agt_h[0]         i2c_mst_agt             -     @536 
-#       m_drv_h              i2c_mst_driver          -     @564 
-#         rsp_port           uvm_analysis_port       -     @579 
-#         seq_item_port      uvm_seq_item_pull_port  -     @571 
-#       m_seqr_h             i2c_mst_seqr            -     @587 
-#         rsp_export         uvm_analysis_export     -     @594 
-#         seq_item_export    uvm_seq_item_pull_imp   -     @688 
-#         arbitration_queue  array                   0     -    
-#         lock_queue         array                   0     -    
-#         num_last_reqs      integral                32    'd1  
-#         num_last_rsps      integral                32    'd1  
-#     m_slv_agt_h[0]         i2c_slv_agt             -     @548 
-#       m_drv_h              i2c_slv_driver          -     @705 
-#         rsp_port           uvm_analysis_port       -     @720 
-#         seq_item_port      uvm_seq_item_pull_port  -     @712 
-#       m_seqr_h             i2c_slv_seqr            -     @728 
-#         rsp_export         uvm_analysis_export     -     @735 
-#         seq_item_export    uvm_seq_item_pull_imp   -     @829 
-#         arbitration_queue  array                   0     -    
-#         lock_queue         array                   0     -    
-#         num_last_reqs      integral                32    'd1  
-#         num_last_rsps      integral                32    'd1  
-# --------------------------------------------------------------
+# ** Warning: (vsim-PLI-3070) $sformatf : Too many arguments.
+#    Time: 0 ns  Iteration: 7  Process: /uvm_pkg::uvm_phase::m_run_phases/#FORK#1847_4f6205ff File: ../test/i2c_base_test.sv Line: 45
+# UVM_INFO ../test/i2c_base_test.sv(45) @ 0: uvm_test_top [env_cfg] Address is generated =  -----------------------------------------------
+# Name                Type            Size  Value
+# -----------------------------------------------
+# m_env_cfg_h         i2c_env_config  -     @509 
+#   m_master_of_agts  integral        32    'h1  
+#   m_slave_of_agts   integral        32    'h1  
+#   m_slv_addr_arr    da(integral)    1     -    
+#     [0]             integral        7     'h4f 
+# -----------------------------------------------
 # 
+# UVM_INFO @ 0: reporter [UVMTOP] UVM testbench topology:
+# -------------------------------------------------------------------
+# Name                        Type                        Size  Value
+# -------------------------------------------------------------------
+# uvm_test_top                i2c_base_test               -     @495 
+#   m_env_h                   i2c_env                     -     @502 
+#     m_mon_h                 i2c_bus_monitor             -     @516 
+#       m_slv_an_port_h       uvm_analysis_port           -     @523 
+#     m_mst_agt_h[0]          i2c_mst_agt                 -     @531 
+#       m_drv_h               i2c_mst_driver              -     @563 
+#         rsp_port            uvm_analysis_port           -     @578 
+#         seq_item_port       uvm_seq_item_pull_port      -     @570 
+#       m_seqr_h              i2c_mst_seqr                -     @586 
+#         rsp_export          uvm_analysis_export         -     @593 
+#         seq_item_export     uvm_seq_item_pull_imp       -     @687 
+#         arbitration_queue   array                       0     -    
+#         lock_queue          array                       0     -    
+#         num_last_reqs       integral                    32    'd1  
+#         num_last_rsps       integral                    32    'd1  
+#     m_slv_agt_h[0]          i2c_slv_agt                 -     @543 
+#       m_drv_h               i2c_slv_driver              -     @712 
+#         rsp_port            uvm_analysis_port           -     @727 
+#         seq_item_port       uvm_seq_item_pull_port      -     @719 
+#       m_seqr_h              i2c_slv_seqr                -     @735 
+#         m_fifo_h            uvm_tlm_analysis_fifo #(T)  -     @852 
+#           analysis_export   uvm_analysis_imp            -     @891 
+#           get_ap            uvm_analysis_port           -     @883 
+#           get_peek_export   uvm_get_peek_imp            -     @867 
+#           put_ap            uvm_analysis_port           -     @875 
+#           put_export        uvm_put_imp                 -     @859 
+#         m_seqr_an_export_h  uvm_analysis_export         -     @844 
+#         rsp_export          uvm_analysis_export         -     @742 
+#         seq_item_export     uvm_seq_item_pull_imp       -     @836 
+#         arbitration_queue   array                       0     -    
+#         lock_queue          array                       0     -    
+#         num_last_reqs       integral                    32    'd1  
+#         num_last_rsps       integral                    32    'd1  
+# -------------------------------------------------------------------
+# 
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(30) @ 0: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Before fifo get
+# ** Warning: (vsim-PLI-3070) $sformatf : Too many arguments.
+#    Time: 5 ns  Iteration: 2  Process: /uvm_pkg::uvm_sequence_base::start/#FORK#294_4f61d535 File: ../env/i2c_mst_agent/i2c_mst_base_seq.sv Line: 44
+# UVM_INFO ../env/i2c_mst_agent/i2c_mst_base_seq.sv(44) @ 5: uvm_test_top.m_env_h.m_mst_agt_h[0].m_seqr_h@@m_mst_seq [mst_seq] Data is generated =  -------------------------------------------------------------------------------------------------------------
+# Name                           Type              Size  Value                                                 
+# -------------------------------------------------------------------------------------------------------------
+# m_mst_trans_h                  i2c_mst_seq_item  -     @921                                                  
+#   m_data                       da(integral)      2     -                                                     
+#     [0]                        integral          8     'hc                                                   
+#     [1]                        integral          8     'h20                                                  
+#   m_slv_addr                   integral          7     'h4f                                                  
+#   m_reg_addr                   integral          8     'hdc                                                  
+#   m_ack                        integral          1     'h0                                                   
+#   m_kind                       trans_kind        1     READ                                                  
+#   begin_time                   time              64    5                                                     
+#   depth                        int               32    'd2                                                   
+#   parent sequence (name)       string            9     m_mst_seq                                             
+#   parent sequence (full name)  string            54    uvm_test_top.m_env_h.m_mst_agt_h[0].m_seqr_h.m_mst_seq
+#   sequencer                    string            44    uvm_test_top.m_env_h.m_mst_agt_h[0].m_seqr_h          
+# -------------------------------------------------------------------------------------------------------------
+# 
+# UVM_INFO ../env/i2c_mst_agent/i2c_mst_driver.sv(101) @ 88: uvm_test_top.m_env_h.m_mst_agt_h[0].m_drv_h [DRV] Send Info: 10011111 | 0x9f
+# ** Warning: (vsim-PLI-3070) $sformatf : Too many arguments.
+#    Time: 88 ns  Iteration: 2  Process: /uvm_pkg::uvm_sequence_base::start/#FORK#294_4f61d51e File: ../env/i2c_slv_agent/i2c_slv_base_seq.sv Line: 32
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(32) @ 88: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Getting FIFO data--------------------------------------------------------
+# Name           Type              Size  Value            
+# --------------------------------------------------------
+# m_slv_trans_h  i2c_slv_seq_item  -     @556             
+#   m_data       integral          8     'h0              
+#   m_ack_nack   integral          1     'h0              
+#   m_slv_addr   integral          7     'h4f             
+#   m_reg_addr   integral          8     'h0              
+#   m_kind       trans_kind        1     READ             
+#   m_state      fsm_state         4     SLV_ADDR_ACK_NACK
+# --------------------------------------------------------
+# 
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_driver.sv(55) @ 88: uvm_test_top.m_env_h.m_slv_agt_h[0].m_drv_h [INFO - SLV_DRV] Get my next item
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_driver.sv(78) @ 88: uvm_test_top.m_env_h.m_slv_agt_h[0].m_drv_h [i2c_slv_driver] Check slave address ...
+# UVM_INFO ../env/i2c_bus_monitor.sv(133) @ 98: uvm_test_top.m_env_h.m_mon_h [i2c_bus_monitor] ACK_NACK - 0 is stable
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(30) @ 98: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Before fifo get
+# UVM_INFO ../env/i2c_mst_agent/i2c_mst_driver.sv(101) @ 178: uvm_test_top.m_env_h.m_mst_agt_h[0].m_drv_h [DRV] Send Info: 11011100 | 0xdc
+# ** Warning: (vsim-PLI-3070) $sformatf : Too many arguments.
+#    Time: 178 ns  Iteration: 2  Process: /uvm_pkg::uvm_sequence_base::start/#FORK#294_4f61d51e File: ../env/i2c_slv_agent/i2c_slv_base_seq.sv Line: 32
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(32) @ 178: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Getting FIFO data-------------------------------------------------------------------------------------------------------------
+# Name                           Type              Size  Value                                                 
+# -------------------------------------------------------------------------------------------------------------
+# m_slv_trans_h                  i2c_slv_seq_item  -     @556                                                  
+#   m_data                       integral          8     'h0                                                   
+#   m_ack_nack                   integral          1     'h0                                                   
+#   m_slv_addr                   integral          7     'h4f                                                  
+#   m_reg_addr                   integral          8     'hdc                                                  
+#   m_kind                       trans_kind        1     READ                                                  
+#   m_state                      fsm_state         4     REG_ADDR_ACK_NACK                                     
+#   begin_time                   time              64    88                                                    
+#   end_time                     time              64    98                                                    
+#   depth                        int               32    'd2                                                   
+#   parent sequence (name)       string            9     m_slv_seq                                             
+#   parent sequence (full name)  string            54    uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h.m_slv_seq
+#   sequencer                    string            44    uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h          
+# -------------------------------------------------------------------------------------------------------------
+# 
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_driver.sv(55) @ 178: uvm_test_top.m_env_h.m_slv_agt_h[0].m_drv_h [INFO - SLV_DRV] Get my next item
+# UVM_INFO ../env/i2c_bus_monitor.sv(174) @ 188: uvm_test_top.m_env_h.m_mon_h [i2c_bus_monitor] ACK_NACK - 0 is stable
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(30) @ 188: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Before fifo get
+# ** Warning: (vsim-PLI-3070) $sformatf : Too many arguments.
+#    Time: 205 ns  Iteration: 3  Process: /uvm_pkg::uvm_sequence_base::start/#FORK#294_4f61d51e File: ../env/i2c_slv_agent/i2c_slv_base_seq.sv Line: 32
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(32) @ 205: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Getting FIFO data-------------------------------------------------------------------------------------------------------------
+# Name                           Type              Size  Value                                                 
+# -------------------------------------------------------------------------------------------------------------
+# m_slv_trans_h                  i2c_slv_seq_item  -     @556                                                  
+#   m_data                       integral          8     'h80                                                  
+#   m_ack_nack                   integral          1     'h0                                                   
+#   m_slv_addr                   integral          7     'h4f                                                  
+#   m_reg_addr                   integral          8     'hdc                                                  
+#   m_kind                       trans_kind        1     READ                                                  
+#   m_state                      fsm_state         4     ACK_NACK_RD                                           
+#   begin_time                   time              64    178                                                   
+#   end_time                     time              64    188                                                   
+#   depth                        int               32    'd2                                                   
+#   parent sequence (name)       string            9     m_slv_seq                                             
+#   parent sequence (full name)  string            54    uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h.m_slv_seq
+#   sequencer                    string            44    uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h          
+# -------------------------------------------------------------------------------------------------------------
+# 
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_driver.sv(55) @ 205: uvm_test_top.m_env_h.m_slv_agt_h[0].m_drv_h [INFO - SLV_DRV] Get my next item
+# UVM_ERROR ../env/i2c_slv_agent/i2c_slv_driver.sv(133) @ 205: uvm_test_top.m_env_h.m_slv_agt_h[0].m_drv_h [i2c_slv_driver] Register Address is not available !
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(30) @ 205: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Before fifo get
+# ** Warning: (vsim-PLI-3070) $sformatf : Too many arguments.
+#    Time: 210 ns  Iteration: 2  Process: /uvm_pkg::uvm_sequence_base::start/#FORK#294_4f61d535 File: ../env/i2c_mst_agent/i2c_mst_base_seq.sv Line: 44
+# UVM_INFO ../env/i2c_mst_agent/i2c_mst_base_seq.sv(44) @ 210: uvm_test_top.m_env_h.m_mst_agt_h[0].m_seqr_h@@m_mst_seq [mst_seq] Data is generated =  -------------------------------------------------------------------------------------------------------------
+# Name                           Type              Size  Value                                                 
+# -------------------------------------------------------------------------------------------------------------
+# m_mst_trans_h                  i2c_mst_seq_item  -     @921                                                  
+#   m_data                       da(integral)      2     -                                                     
+#     [0]                        integral          8     'h3                                                   
+#     [1]                        integral          8     'h47                                                  
+#   m_slv_addr                   integral          7     'h4f                                                  
+#   m_reg_addr                   integral          8     'h49                                                  
+#   m_ack                        integral          1     'h1                                                   
+#   m_kind                       trans_kind        1     WRITE                                                 
+#   begin_time                   time              64    210                                                   
+#   end_time                     time              64    205                                                   
+#   depth                        int               32    'd2                                                   
+#   parent sequence (name)       string            9     m_mst_seq                                             
+#   parent sequence (full name)  string            54    uvm_test_top.m_env_h.m_mst_agt_h[0].m_seqr_h.m_mst_seq
+#   sequencer                    string            44    uvm_test_top.m_env_h.m_mst_agt_h[0].m_seqr_h          
+# -------------------------------------------------------------------------------------------------------------
+# 
+# UVM_INFO ../env/i2c_mst_agent/i2c_mst_driver.sv(101) @ 294: uvm_test_top.m_env_h.m_mst_agt_h[0].m_drv_h [DRV] Send Info: 10011110 | 0x9e
+# ** Warning: (vsim-PLI-3070) $sformatf : Too many arguments.
+#    Time: 316 ns  Iteration: 2  Process: /uvm_pkg::uvm_sequence_base::start/#FORK#294_4f61d535 File: ../env/i2c_mst_agent/i2c_mst_base_seq.sv Line: 44
+# UVM_INFO ../env/i2c_mst_agent/i2c_mst_base_seq.sv(44) @ 316: uvm_test_top.m_env_h.m_mst_agt_h[0].m_seqr_h@@m_mst_seq [mst_seq] Data is generated =  -------------------------------------------------------------------------------------------------------------
+# Name                           Type              Size  Value                                                 
+# -------------------------------------------------------------------------------------------------------------
+# m_mst_trans_h                  i2c_mst_seq_item  -     @921                                                  
+#   m_data                       da(integral)      3     -                                                     
+#     [0]                        integral          8     'h53                                                  
+#     [1]                        integral          8     'hba                                                  
+#     [2]                        integral          8     'hbd                                                  
+#   m_slv_addr                   integral          7     'h4f                                                  
+#   m_reg_addr                   integral          8     'h8                                                   
+#   m_ack                        integral          1     'h0                                                   
+#   m_kind                       trans_kind        1     WRITE                                                 
+#   begin_time                   time              64    316                                                   
+#   end_time                     time              64    311                                                   
+#   depth                        int               32    'd2                                                   
+#   parent sequence (name)       string            9     m_mst_seq                                             
+#   parent sequence (full name)  string            54    uvm_test_top.m_env_h.m_mst_agt_h[0].m_seqr_h.m_mst_seq
+#   sequencer                    string            44    uvm_test_top.m_env_h.m_mst_agt_h[0].m_seqr_h          
+# -------------------------------------------------------------------------------------------------------------
+# 
+# UVM_INFO ../env/i2c_mst_agent/i2c_mst_driver.sv(101) @ 400: uvm_test_top.m_env_h.m_mst_agt_h[0].m_drv_h [DRV] Send Info: 10011110 | 0x9e
+# ** Warning: (vsim-PLI-3070) $sformatf : Too many arguments.
+#    Time: 400 ns  Iteration: 2  Process: /uvm_pkg::uvm_sequence_base::start/#FORK#294_4f61d51e File: ../env/i2c_slv_agent/i2c_slv_base_seq.sv Line: 32
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(32) @ 400: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Getting FIFO data-------------------------------------------------------------------------------------------------------------
+# Name                           Type              Size  Value                                                 
+# -------------------------------------------------------------------------------------------------------------
+# m_slv_trans_h                  i2c_slv_seq_item  -     @556                                                  
+#   m_data                       integral          8     'h80                                                  
+#   m_ack_nack                   integral          1     'h1                                                   
+#   m_slv_addr                   integral          7     'h4f                                                  
+#   m_reg_addr                   integral          8     'hdc                                                  
+#   m_kind                       trans_kind        1     WRITE                                                 
+#   m_state                      fsm_state         4     SLV_ADDR_ACK_NACK                                     
+#   begin_time                   time              64    205                                                   
+#   end_time                     time              64    205                                                   
+#   depth                        int               32    'd2                                                   
+#   parent sequence (name)       string            9     m_slv_seq                                             
+#   parent sequence (full name)  string            54    uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h.m_slv_seq
+#   sequencer                    string            44    uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h          
+# -------------------------------------------------------------------------------------------------------------
+# 
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_driver.sv(55) @ 400: uvm_test_top.m_env_h.m_slv_agt_h[0].m_drv_h [INFO - SLV_DRV] Get my next item
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_driver.sv(78) @ 400: uvm_test_top.m_env_h.m_slv_agt_h[0].m_drv_h [i2c_slv_driver] Check slave address ...
+# UVM_INFO ../env/i2c_bus_monitor.sv(133) @ 410: uvm_test_top.m_env_h.m_mon_h [i2c_bus_monitor] ACK_NACK - 0 is stable
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(30) @ 410: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Before fifo get
+# UVM_INFO ../env/i2c_mst_agent/i2c_mst_driver.sv(101) @ 490: uvm_test_top.m_env_h.m_mst_agt_h[0].m_drv_h [DRV] Send Info: 00001000 | 0x8
+# ** Warning: (vsim-PLI-3070) $sformatf : Too many arguments.
+#    Time: 490 ns  Iteration: 2  Process: /uvm_pkg::uvm_sequence_base::start/#FORK#294_4f61d51e File: ../env/i2c_slv_agent/i2c_slv_base_seq.sv Line: 32
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(32) @ 490: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Getting FIFO data-------------------------------------------------------------------------------------------------------------
+# Name                           Type              Size  Value                                                 
+# -------------------------------------------------------------------------------------------------------------
+# m_slv_trans_h                  i2c_slv_seq_item  -     @556                                                  
+#   m_data                       integral          8     'h80                                                  
+#   m_ack_nack                   integral          1     'h0                                                   
+#   m_slv_addr                   integral          7     'h4f                                                  
+#   m_reg_addr                   integral          8     'h8                                                   
+#   m_kind                       trans_kind        1     WRITE                                                 
+#   m_state                      fsm_state         4     REG_ADDR_ACK_NACK                                     
+#   begin_time                   time              64    400                                                   
+#   end_time                     time              64    410                                                   
+#   depth                        int               32    'd2                                                   
+#   parent sequence (name)       string            9     m_slv_seq                                             
+#   parent sequence (full name)  string            54    uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h.m_slv_seq
+#   sequencer                    string            44    uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h          
+# -------------------------------------------------------------------------------------------------------------
+# 
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_driver.sv(55) @ 490: uvm_test_top.m_env_h.m_slv_agt_h[0].m_drv_h [INFO - SLV_DRV] Get my next item
+# UVM_INFO ../env/i2c_bus_monitor.sv(174) @ 500: uvm_test_top.m_env_h.m_mon_h [i2c_bus_monitor] ACK_NACK - 0 is stable
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(30) @ 500: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Before fifo get
+# UVM_INFO ../env/i2c_mst_agent/i2c_mst_driver.sv(101) @ 580: uvm_test_top.m_env_h.m_mst_agt_h[0].m_drv_h [DRV] Send Info: 01010011 | 0x53
+# ** Warning: (vsim-PLI-3070) $sformatf : Too many arguments.
+#    Time: 580 ns  Iteration: 2  Process: /uvm_pkg::uvm_sequence_base::start/#FORK#294_4f61d51e File: ../env/i2c_slv_agent/i2c_slv_base_seq.sv Line: 32
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(32) @ 580: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Getting FIFO data-------------------------------------------------------------------------------------------------------------
+# Name                           Type              Size  Value                                                 
+# -------------------------------------------------------------------------------------------------------------
+# m_slv_trans_h                  i2c_slv_seq_item  -     @556                                                  
+#   m_data                       integral          8     'h53                                                  
+#   m_ack_nack                   integral          1     'h0                                                   
+#   m_slv_addr                   integral          7     'h4f                                                  
+#   m_reg_addr                   integral          8     'h8                                                   
+#   m_kind                       trans_kind        1     WRITE                                                 
+#   m_state                      fsm_state         4     ACK_NACK_WR                                           
+#   begin_time                   time              64    490                                                   
+#   end_time                     time              64    500                                                   
+#   depth                        int               32    'd2                                                   
+#   parent sequence (name)       string            9     m_slv_seq                                             
+#   parent sequence (full name)  string            54    uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h.m_slv_seq
+#   sequencer                    string            44    uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h          
+# -------------------------------------------------------------------------------------------------------------
+# 
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_driver.sv(55) @ 580: uvm_test_top.m_env_h.m_slv_agt_h[0].m_drv_h [INFO - SLV_DRV] Get my next item
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_driver.sv(102) @ 580: uvm_test_top.m_env_h.m_slv_agt_h[0].m_drv_h [i2c_slv_driver] SLV_MEM: {8:83} 
+# UVM_INFO ../env/i2c_bus_monitor.sv(227) @ 590: uvm_test_top.m_env_h.m_mon_h [i2c_bus_monitor] ACK_NACK - 0 is stable
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(30) @ 590: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Before fifo get
+# UVM_INFO ../env/i2c_mst_agent/i2c_mst_driver.sv(101) @ 670: uvm_test_top.m_env_h.m_mst_agt_h[0].m_drv_h [DRV] Send Info: 10111010 | 0xba
+# ** Warning: (vsim-PLI-3070) $sformatf : Too many arguments.
+#    Time: 670 ns  Iteration: 2  Process: /uvm_pkg::uvm_sequence_base::start/#FORK#294_4f61d51e File: ../env/i2c_slv_agent/i2c_slv_base_seq.sv Line: 32
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(32) @ 670: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Getting FIFO data-------------------------------------------------------------------------------------------------------------
+# Name                           Type              Size  Value                                                 
+# -------------------------------------------------------------------------------------------------------------
+# m_slv_trans_h                  i2c_slv_seq_item  -     @556                                                  
+#   m_data                       integral          8     'hba                                                  
+#   m_ack_nack                   integral          1     'h0                                                   
+#   m_slv_addr                   integral          7     'h4f                                                  
+#   m_reg_addr                   integral          8     'h8                                                   
+#   m_kind                       trans_kind        1     WRITE                                                 
+#   m_state                      fsm_state         4     ACK_NACK_WR                                           
+#   begin_time                   time              64    580                                                   
+#   end_time                     time              64    590                                                   
+#   depth                        int               32    'd2                                                   
+#   parent sequence (name)       string            9     m_slv_seq                                             
+#   parent sequence (full name)  string            54    uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h.m_slv_seq
+#   sequencer                    string            44    uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h          
+# -------------------------------------------------------------------------------------------------------------
+# 
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_driver.sv(55) @ 670: uvm_test_top.m_env_h.m_slv_agt_h[0].m_drv_h [INFO - SLV_DRV] Get my next item
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_driver.sv(102) @ 670: uvm_test_top.m_env_h.m_slv_agt_h[0].m_drv_h [i2c_slv_driver] SLV_MEM: {8:83 186} 
+# UVM_INFO ../env/i2c_bus_monitor.sv(227) @ 680: uvm_test_top.m_env_h.m_mon_h [i2c_bus_monitor] ACK_NACK - 0 is stable
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(30) @ 680: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Before fifo get
+# UVM_INFO ../env/i2c_mst_agent/i2c_mst_driver.sv(101) @ 760: uvm_test_top.m_env_h.m_mst_agt_h[0].m_drv_h [DRV] Send Info: 10111101 | 0xbd
+# ** Warning: (vsim-PLI-3070) $sformatf : Too many arguments.
+#    Time: 760 ns  Iteration: 2  Process: /uvm_pkg::uvm_sequence_base::start/#FORK#294_4f61d51e File: ../env/i2c_slv_agent/i2c_slv_base_seq.sv Line: 32
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(32) @ 760: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Getting FIFO data-------------------------------------------------------------------------------------------------------------
+# Name                           Type              Size  Value                                                 
+# -------------------------------------------------------------------------------------------------------------
+# m_slv_trans_h                  i2c_slv_seq_item  -     @556                                                  
+#   m_data                       integral          8     'hbd                                                  
+#   m_ack_nack                   integral          1     'h0                                                   
+#   m_slv_addr                   integral          7     'h4f                                                  
+#   m_reg_addr                   integral          8     'h8                                                   
+#   m_kind                       trans_kind        1     WRITE                                                 
+#   m_state                      fsm_state         4     ACK_NACK_WR                                           
+#   begin_time                   time              64    670                                                   
+#   end_time                     time              64    680                                                   
+#   depth                        int               32    'd2                                                   
+#   parent sequence (name)       string            9     m_slv_seq                                             
+#   parent sequence (full name)  string            54    uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h.m_slv_seq
+#   sequencer                    string            44    uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h          
+# -------------------------------------------------------------------------------------------------------------
+# 
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_driver.sv(55) @ 760: uvm_test_top.m_env_h.m_slv_agt_h[0].m_drv_h [INFO - SLV_DRV] Get my next item
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_driver.sv(102) @ 760: uvm_test_top.m_env_h.m_slv_agt_h[0].m_drv_h [i2c_slv_driver] SLV_MEM: {8:83 186 189} 
+# UVM_INFO ../env/i2c_bus_monitor.sv(227) @ 770: uvm_test_top.m_env_h.m_mon_h [i2c_bus_monitor] ACK_NACK - 0 is stable
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(30) @ 770: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Before fifo get
+# ** Warning: (vsim-PLI-3070) $sformatf : Too many arguments.
+#    Time: 777 ns  Iteration: 3  Process: /uvm_pkg::uvm_sequence_base::start/#FORK#294_4f61d51e File: ../env/i2c_slv_agent/i2c_slv_base_seq.sv Line: 32
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(32) @ 777: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Getting FIFO data-------------------------------------------------------------------------------------------------------------
+# Name                           Type              Size  Value                                                 
+# -------------------------------------------------------------------------------------------------------------
+# m_slv_trans_h                  i2c_slv_seq_item  -     @556                                                  
+#   m_data                       integral          8     'h0                                                   
+#   m_ack_nack                   integral          1     'h0                                                   
+#   m_slv_addr                   integral          7     'h4f                                                  
+#   m_reg_addr                   integral          8     'h8                                                   
+#   m_kind                       trans_kind        1     WRITE                                                 
+#   m_state                      fsm_state         4     ACK_NACK_WR                                           
+#   begin_time                   time              64    760                                                   
+#   end_time                     time              64    770                                                   
+#   depth                        int               32    'd2                                                   
+#   parent sequence (name)       string            9     m_slv_seq                                             
+#   parent sequence (full name)  string            54    uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h.m_slv_seq
+#   sequencer                    string            44    uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h          
+# -------------------------------------------------------------------------------------------------------------
+# 
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_driver.sv(55) @ 777: uvm_test_top.m_env_h.m_slv_agt_h[0].m_drv_h [INFO - SLV_DRV] Get my next item
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_driver.sv(102) @ 777: uvm_test_top.m_env_h.m_slv_agt_h[0].m_drv_h [i2c_slv_driver] SLV_MEM: {8:83 186 189 0} 
+# ** Warning: (vsim-PLI-3070) $sformatf : Too many arguments.
+#    Time: 782 ns  Iteration: 2  Process: /uvm_pkg::uvm_sequence_base::start/#FORK#294_4f61d535 File: ../env/i2c_mst_agent/i2c_mst_base_seq.sv Line: 44
+# UVM_INFO ../env/i2c_mst_agent/i2c_mst_base_seq.sv(44) @ 782: uvm_test_top.m_env_h.m_mst_agt_h[0].m_seqr_h@@m_mst_seq [mst_seq] Data is generated =  -------------------------------------------------------------------------------------------------------------
+# Name                           Type              Size  Value                                                 
+# -------------------------------------------------------------------------------------------------------------
+# m_mst_trans_h                  i2c_mst_seq_item  -     @921                                                  
+#   m_data                       da(integral)      2     -                                                     
+#     [0]                        integral          8     'h64                                                  
+#     [1]                        integral          8     'h15                                                  
+#   m_slv_addr                   integral          7     'h4f                                                  
+#   m_reg_addr                   integral          8     'h9d                                                  
+#   m_ack                        integral          1     'h1                                                   
+#   m_kind                       trans_kind        1     WRITE                                                 
+#   begin_time                   time              64    782                                                   
+#   end_time                     time              64    777                                                   
+#   depth                        int               32    'd2                                                   
+#   parent sequence (name)       string            9     m_mst_seq                                             
+#   parent sequence (full name)  string            54    uvm_test_top.m_env_h.m_mst_agt_h[0].m_seqr_h.m_mst_seq
+#   sequencer                    string            44    uvm_test_top.m_env_h.m_mst_agt_h[0].m_seqr_h          
+# -------------------------------------------------------------------------------------------------------------
+# 
+# UVM_INFO ../env/i2c_slv_agent/i2c_slv_base_seq.sv(30) @ 784: uvm_test_top.m_env_h.m_slv_agt_h[0].m_seqr_h@@m_slv_seq [i2c_slv_base_seq] Before fifo get
+# UVM_INFO ../env/i2c_mst_agent/i2c_mst_driver.sv(101) @ 866: uvm_test_top.m_env_h.m_mst_agt_h[0].m_drv_h [DRV] Send Info: 10011110 | 0x9e
+# UVM_INFO verilog_src/uvm-1.1d/src/base/uvm_objection.svh(1267) @ 883: reporter [TEST_DONE] 'run' phase is ready to proceed to the 'extract' phase
 # 
 # --- UVM Report Summary ---
 # 
 # ** Report counts by severity
-# UVM_INFO :    4
+# UVM_INFO :   60
 # UVM_WARNING :    0
-# UVM_ERROR :    0
+# UVM_ERROR :    1
 # UVM_FATAL :    0
 # ** Report counts by id
+# [DRV]     9
+# [INFO - SLV_DRV]     9
 # [Questa UVM]     2
 # [RNTST]     1
+# [TEST_DONE]     1
 # [UVMTOP]     1
+# [env_cfg]     1
+# [i2c_bus_monitor]     7
+# [i2c_slv_base_seq]    19
+# [i2c_slv_driver]     7
+# [mst_seq]     4
 # ** Note: $finish    : C:/questasim64_10.7c/win64/../verilog_src/uvm-1.1d/src/base/uvm_root.svh(430)
-#    Time: 0 ns  Iteration: 215  Instance: /i2c_tb_top
-# End time: 15:39:44 on Apr 02,2025, Elapsed time: 0:00:02
-# Errors: 0, Warnings: 0
+#    Time: 883 ns  Iteration: 61  Instance: /i2c_tb_top
+# End time: 11:19:01 on Apr 11,2025, Elapsed time: 0:00:02
+# Errors: 0, Warnings: 16

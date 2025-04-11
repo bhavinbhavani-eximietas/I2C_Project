@@ -10,7 +10,7 @@ class i2c_env_config extends uvm_object;
    
   //To set No of i2c Master Agent
   int m_master_of_agts = 1; 
-  int m_slave_of_agts = 2;   
+  int m_slave_of_agts = 1; 
   
   rand bit [6:0] m_slv_addr_arr[];
 
@@ -29,34 +29,32 @@ class i2c_env_config extends uvm_object;
   extern function void set_no_slave(int value_slv);
     
 endclass: i2c_env_config
-`endif
 
 function i2c_env_config::new(string name = "");
   super.new(name);
 endfunction
   
 function void i2c_env_config::set_no_master(int value_mst); 
-  
   if (value_mst < MAX_MST) begin
     m_master_of_agts = value_mst;
   end 
-	
+
   else begin
-    `uvm_error(get_full_name(), $sformatf("Invalid number of masters: %0d. MAX_MAS allowed is %0d. 
-    Keeping previous value_mst: %0d", value_mst, MAX_MST, m_master_of_agts));
+    m_master_of_agts = MAX_MST;
+    `uvm_warning(get_full_name(), $sformatf("Invalid number of masters: %0d. MAX_MAS allowed is 
+    %0d. Keeping previous value_mst: %0d", value_mst, MAX_MST, m_master_of_agts));
   end
-  
 endfunction: set_no_master
   
 function void i2c_env_config::set_no_slave(int value_slv);
-
   if (value_slv  < MAX_SLV) begin
     m_slave_of_agts = value_slv;
   end
-	
+
   else begin
-     `uvm_error(get_full_name(), $sformatf("Invalid number of slaves: %0d. MAX_SLAVE allowed is 
-     %0d. Keeping previous value_mst: %0d", value_slv, MAX_SLV, m_slave_of_agts))
+    m_slave_of_agts = MAX_SLV;
+    `uvm_warning(get_full_name(), $sformatf("Invalid number of slaves: %0d. MAX_SLAVE allowed is 
+    %0d. Keeping previous value_mst: %0d", value_slv, MAX_SLV, m_slave_of_agts))
   end
-  
 endfunction: set_no_slave
+`endif

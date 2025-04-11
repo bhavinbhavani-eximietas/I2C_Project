@@ -26,7 +26,6 @@ class i2c_slv_agt extends uvm_agent;
   extern function void connect_phase(uvm_phase phase);
    
 endclass: i2c_slv_agt
-`endif
 
 function i2c_slv_agt::new(string name = "", uvm_component parent = null);
   super.new(name, parent);
@@ -34,17 +33,17 @@ endfunction
   
 function void i2c_slv_agt::build_phase(uvm_phase phase);
   super.build_phase(phase);
-	 
+ 
   //create handle of slvter config 
   m_slv_cfg_h = i2c_slv_config::type_id::create("m_slv_cfg_h", this);
-	 
+ 
   //get slv configuration 
   if(!uvm_config_db #(i2c_slv_config)::get(this, "", "slv_config", m_slv_cfg_h)) begin
     `uvm_fatal(get_full_name(), "slvter config is not available")
   end
   
-  uvm_config_db #(bit [6:0])::set(this, "*", "slv_addr", m_slv_addr);
-	 
+  uvm_config_db #(bit [6:0])::set(this, "m_drv_h", "slv_addr", m_slv_addr);
+
   //if agent is active create driver and sequencer 
   if(m_slv_cfg_h.is_active == UVM_ACTIVE) begin 
     m_drv_h = i2c_slv_driver::type_id::create("m_drv_h", this);
@@ -63,9 +62,8 @@ function void i2c_slv_agt::connect_phase(uvm_phase phase);
   
   if(m_slv_cfg_h.is_active == UVM_ACTIVE) begin 
     m_drv_h.seq_item_port.connect(m_seqr_h.seq_item_export);
-
     m_drv_h.m_vif = this.m_vif; 
   end
   
 endfunction: connect_phase
-  
+`endif

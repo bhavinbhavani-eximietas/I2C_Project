@@ -3,13 +3,12 @@
 //  module name : i2c mst_PKG
 //////////////////////////////////////////////////////////////////
 
-`ifndef I2C_mst_PKG_SV
-`define I2C_mst_PKG_SV
+`ifndef i2c_mst_pkg_sv
+`define i2c_mst_pkg_sv
 
 package i2c_mst_pkg;
 
   import uvm_pkg::*;
-  
   `include "uvm_macros.svh"
   
   `include "i2c_mst_config.sv"
@@ -23,6 +22,3 @@ package i2c_mst_pkg;
 endpackage: i2c_mst_pkg
 
 `endif
-
-
-

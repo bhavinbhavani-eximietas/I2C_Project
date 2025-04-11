@@ -16,12 +16,7 @@ package i2c_slv_pkg;
   `include "i2c_slv_driver.sv"
   `include "i2c_slv_seqr.sv"
   `include "i2c_slv_agent.sv"
-  
   `include "i2c_slv_base_seqs.sv"
  
 endpackage: i2c_slv_pkg
-
 `endif
-
-
-
